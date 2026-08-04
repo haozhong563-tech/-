@@ -22,21 +22,19 @@
   <section class="grid">
     <div class="card"><div class="label">累计打开设备会话</div><div class="value" data-counter="opens">—</div></div>
     <div class="card"><div class="label">二维码进入设备会话</div><div class="value" data-counter="qr-opens">—</div></div>
-    <div class="card"><div class="label">近 5 分钟活跃设备</div><div class="value" id="active">—</div></div>
     <div class="card"><div class="label">累计通关次数</div><div class="value" data-counter="completions-total">—</div></div>
     <div class="card"><div class="label">第一关通关次数</div><div class="value" data-counter="level-1">—</div></div>
     <div class="card"><div class="label">第二关通关次数</div><div class="value" data-counter="level-2">—</div></div>
     <div class="card"><div class="label">第一关独立设备通关</div><div class="value" data-counter="unique-finishers-level-1">—</div></div>
     <div class="card"><div class="label">第二关独立设备通关</div><div class="value" data-counter="unique-finishers-level-2">—</div></div>
   </section>
-  <div class="note">“在线人数”为近 5 分钟内保持页面可见的独立浏览器会话估算；“独立设备通关”按浏览器本地记录去重。清除浏览器数据或换设备会被视为新设备。公开基础计数服务可能有约 10 分钟读取缓存，正式大型活动建议接入专属数据库。</div>
+  <div class="note">为加快游戏进入速度，已停用实时在线心跳。“独立设备通关”按浏览器本地记录去重；清除浏览器数据或换设备会被视为新设备。公开基础计数服务可能有约 10 分钟读取缓存。</div>
   <button id="refresh" type="button">立即刷新</button><span id="status"></span>
 </main>
 <script>
   const BASE="https://api.counterapi.dev/v1/tattu-power-rush-independent-20260804";
-  const bucket=()=>{const d=new Date(),m=Math.floor(d.getUTCMinutes()/5)*5;return `active-${d.getUTCFullYear()}${String(d.getUTCMonth()+1).padStart(2,"0")}${String(d.getUTCDate()).padStart(2,"0")}-${String(d.getUTCHours()).padStart(2,"0")}${String(m).padStart(2,"0")}`};
   const get=async name=>{try{const r=await fetch(`${BASE}/${name}/`,{cache:"no-store"});if(!r.ok)return 0;const d=await r.json();return Number(d.count??d.value??0)||0}catch{return 0}};
-  async function refresh(){const status=document.querySelector("#status");status.textContent="正在更新…";const nodes=[...document.querySelectorAll("[data-counter]")];await Promise.all(nodes.map(async n=>n.textContent=(await get(n.dataset.counter)).toLocaleString("zh-CN")));document.querySelector("#active").textContent=(await get(bucket())).toLocaleString("zh-CN");status.textContent=`更新时间：${new Date().toLocaleString("zh-CN")}`}
+  async function refresh(){const status=document.querySelector("#status");status.textContent="正在更新…";const nodes=[...document.querySelectorAll("[data-counter]")];await Promise.all(nodes.map(async n=>n.textContent=(await get(n.dataset.counter)).toLocaleString("zh-CN")));status.textContent=`更新时间：${new Date().toLocaleString("zh-CN")}`}
   document.querySelector("#refresh").addEventListener("click",refresh);refresh();setInterval(refresh,60000);
 </script>
 </body>

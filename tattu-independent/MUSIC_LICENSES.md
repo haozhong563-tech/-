@@ -1,8 +1,8 @@
 # TATTU music assets
 
-- `tattu-menu-music.ogg` — “Synthwave House Loop” by Fupi, CC0.
-  Source: https://opengameart.org/content/synthwave-house-loop
-- `tattu-race-music.mp3` — “Space Adventure” by MintoDog, CC0.
-  Source: https://opengameart.org/content/space-adventure
+- `tattu-menu-music.mp3` — “Cyberpunk” by The_Mountain.
+  Source: https://pixabay.com/music/synthwave-cyberpunk-132336/
+- `tattu-race-music.mp3` — “Nextgen Show (Cyberpunk)” by Amaksi.
+  Source: https://pixabay.com/music/electro-nextgen-show-cyberpunk-114449/
 
-Both source pages identify the tracks as CC0. Attribution is not required; this file preserves provenance for later audits.
+Both source pages identify the tracks as free for use under the Pixabay Content License. The packaged copies are transcoded to 96 kbps for mobile streaming performance.
