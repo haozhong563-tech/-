@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>TATTU 游戏数据</title>
+  <style>
+    :root{color-scheme:dark;--yellow:#ffd100;--panel:#171717;--muted:#a5a5a5}
+    *{box-sizing:border-box}body{margin:0;background:#080808;color:#fff;font:16px/1.5 system-ui,"Microsoft YaHei",sans-serif}
+    main{width:min(980px,calc(100% - 28px));margin:auto;padding:36px 0 56px}h1{margin:0;color:var(--yellow);font-size:clamp(28px,6vw,48px)}
+    .sub{color:var(--muted);margin:6px 0 24px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+    .card{background:var(--panel);border:1px solid #303030;border-radius:16px;padding:18px;min-height:126px}.label{color:#c7c7c7}.value{font-size:38px;font-weight:900;color:var(--yellow);margin-top:10px}
+    .note{margin-top:18px;padding:16px;border-left:4px solid var(--yellow);background:#111;color:#cfcfcf;border-radius:6px}button{margin-top:20px;border:0;border-radius:999px;background:var(--yellow);color:#111;font-weight:800;padding:12px 22px;cursor:pointer}
+    #status{margin-left:12px;color:var(--muted);font-size:14px}@media(max-width:480px){main{padding-top:24px}.value{font-size:32px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>TATTU 游戏数据</h1>
+  <p class="sub">二维码入口与游戏效果概览</p>
+  <section class="grid">
+    <div class="card"><div class="label">累计打开设备会话</div><div class="value" data-counter="opens">—</div></div>
+    <div class="card"><div class="label">二维码进入设备会话</div><div class="value" data-counter="qr-opens">—</div></div>
+    <div class="card"><div class="label">近 5 分钟活跃设备</div><div class="value" id="active">—</div></div>
+    <div class="card"><div class="label">累计通关次数</div><div class="value" data-counter="completions-total">—</div></div>
+    <div class="card"><div class="label">第一关通关次数</div><div class="value" data-counter="level-1">—</div></div>
+    <div class="card"><div class="label">第二关通关次数</div><div class="value" data-counter="level-2">—</div></div>
+    <div class="card"><div class="label">第一关独立设备通关</div><div class="value" data-counter="unique-finishers-level-1">—</div></div>
+    <div class="card"><div class="label">第二关独立设备通关</div><div class="value" data-counter="unique-finishers-level-2">—</div></div>
+  </section>
+  <div class="note">“在线人数”为近 5 分钟内保持页面可见的独立浏览器会话估算；“独立设备通关”按浏览器本地记录去重。清除浏览器数据或换设备会被视为新设备。公开基础计数服务可能有约 10 分钟读取缓存，正式大型活动建议接入专属数据库。</div>
+  <button id="refresh" type="button">立即刷新</button><span id="status"></span>
+</main>
+<script>
+  const BASE="https://api.counterapi.dev/v1/tattu-power-rush-independent-20260804";
+  const bucket=()=>{const d=new Date(),m=Math.floor(d.getUTCMinutes()/5)*5;return `active-${d.getUTCFullYear()}${String(d.getUTCMonth()+1).padStart(2,"0")}${String(d.getUTCDate()).padStart(2,"0")}-${String(d.getUTCHours()).padStart(2,"0")}${String(m).padStart(2,"0")}`};
+  const get=async name=>{try{const r=await fetch(`${BASE}/${name}/`,{cache:"no-store"});if(!r.ok)return 0;const d=await r.json();return Number(d.count??d.value??0)||0}catch{return 0}};
+  async function refresh(){const status=document.querySelector("#status");status.textContent="正在更新…";const nodes=[...document.querySelectorAll("[data-counter]")];await Promise.all(nodes.map(async n=>n.textContent=(await get(n.dataset.counter)).toLocaleString("zh-CN")));document.querySelector("#active").textContent=(await get(bucket())).toLocaleString("zh-CN");status.textContent=`更新时间：${new Date().toLocaleString("zh-CN")}`}
+  document.querySelector("#refresh").addEventListener("click",refresh);refresh();setInterval(refresh,60000);
+</script>
+</body>
+</html>
